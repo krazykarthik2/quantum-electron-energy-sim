@@ -55,7 +55,7 @@ def build_problem_from_geometry(geometry: str):
     return problem, nuc_rep
 
 @profile
-def compute_both_energies(geometry: str, vqe_reps: int = 1, vqe_maxiter: int = 1000):
+def compute_both_energies(geometry: str, vqe_reps: int = 1, vqe_maxiter: int = 2000):
     """
     Compute classical exact energy and a statevector-based VQE energy (TwoLocal).
     Returns dict: {"classical": float, "vqe": float, "vqe_info": {...}}
@@ -93,11 +93,7 @@ def compute_both_energies(geometry: str, vqe_reps: int = 1, vqe_maxiter: int = 1
 
         # === VQE (statevector-based) using TwoLocal ansatz ===
         # Keep ansatz small: reps = vqe_reps
-        ansatz = TwoLocal(num_qubits=n_qubits,
-                          rotation_blocks="ry",
-                          entanglement_blocks="cz",
-                          reps=vqe_reps,
-                          entanglement="linear")
+        ansatz = TwoLocal(n_qubits, "ry", "cz", reps=2)
         n_params = ansatz.num_parameters
         logging.info(f"TwoLocal ansatz: qubits={ansatz.num_qubits}, params={n_params}, reps={vqe_reps}")
 
@@ -164,7 +160,7 @@ def compute_both_energies(geometry: str, vqe_reps: int = 1, vqe_maxiter: int = 1
 async def ground_state_energy(
     geometry: str = Query(..., description='Molecule geometry string, e.g. "H 0 0 0; H 0 0 0.735"'),
     vqe_reps: int = Query(1, ge=1, le=3, description="TwoLocal ansatz repetitions (small integer)"),
-    vqe_maxiter: int = Query(1000, ge=10, le=10000, description="Max iterations for VQE optimizer"),
+    vqe_maxiter: int = Query(2000, ge=10, le=10000, description="Max iterations for VQE optimizer"),
     recompute: bool = Query(False, description="Force recomputation even if cached")
 ):
 
