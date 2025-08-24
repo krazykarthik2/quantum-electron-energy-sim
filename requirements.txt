@@ -1,0 +1,8 @@
+qiskit==0.46.3
+qiskit-nature==0.7.2
+pyscf
+fastapi
+uvicorn
+pyngrok
+nest-asyncio
+pyyaml
