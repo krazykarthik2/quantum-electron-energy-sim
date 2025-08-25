@@ -1,5 +1,6 @@
 import asyncio
 from fastapi import FastAPI, HTTPException, Query
+from fastapi.middleware.cors import CORSMiddleware
 from concurrent.futures import ThreadPoolExecutor
 import logging
 import gc
@@ -31,6 +32,21 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 
 app = FastAPI()
 executor = ThreadPoolExecutor(max_workers=2)   # keep small for Colab
+
+# Add this after app initialization
+origins = [
+    "*"   # allow all origins, or replace with specific frontend URLs like "http://localhost:3000"
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
 
 # Simple in-memory cache
 results_cache = {}
